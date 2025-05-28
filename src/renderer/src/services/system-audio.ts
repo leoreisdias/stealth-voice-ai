@@ -5,6 +5,7 @@ export class WindowAudioCapture {
   private audioChunks: Blob[] = []
 
   async start() {
+    console.log('🎥 Iniciando captura de áudio da janela...')
     const stream = await navigator.mediaDevices.getDisplayMedia({
       audio: {
         echoCancellation: false,
@@ -13,6 +14,8 @@ export class WindowAudioCapture {
       },
       video: false
     })
+
+    console.log('🎥 Captura de áudio da janela iniciada:', stream)
 
     this.mediaRecorder = new MediaRecorder(stream)
     this.audioChunks = []

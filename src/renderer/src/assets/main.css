@@ -7,7 +7,7 @@ body {
   overflow: hidden;
   background-size: cover;
   user-select: none;
-  background-color: #16161620;
+  background-color: transparent;
 }
 
 code {
@@ -53,16 +53,6 @@ code {
   color: var(--ev-c-text-2);
   font-weight: 600;
   margin-bottom: 10px;
-}
-
-.text {
-  font-size: 28px;
-  color: var(--ev-c-text-1);
-  font-weight: 700;
-  line-height: 32px;
-  text-align: center;
-  margin: 0 10px;
-  padding: 16px 0;
 }
 
 .tip {
@@ -148,12 +138,6 @@ code {
   opacity: 0.8;
   &:last-child {
     border: none;
-  }
-}
-
-@media (max-width: 720px) {
-  .text {
-    font-size: 20px;
   }
 }
 

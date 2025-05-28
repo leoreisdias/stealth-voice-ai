@@ -29,7 +29,8 @@ export default tseslint.config(
       '@typescript-eslint/explicit-function-return-type': 'off',
       'react/display-name': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/triple-slash-reference': 'off'
+      '@typescript-eslint/triple-slash-reference': 'off',
+      'prefer-const': 'off'
     }
   },
   eslintConfigPrettier

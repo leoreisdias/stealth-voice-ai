@@ -20,6 +20,19 @@ export default defineConfig({
   // Useful for theme customization
   theme: {
     extend: {
+      keyframes: {
+        ripple: {
+          '0%': {
+            transform: 'translate(-50%, -50%) scale(1)'
+          },
+          '50%': {
+            transform: 'translate(-50%, -50%) scale(0.9)'
+          },
+          '100%': {
+            transform: 'translate(-50%, -50%) scale(1)'
+          }
+        }
+      },
       tokens: {
         colors: {
           stealth: {

@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 
@@ -7,6 +8,7 @@ import { createTray } from './tray/create-tray'
 import { registerGlobalShortcuts, unregisterGlobalShortcuts } from './shortcuts/global-shurtcuts'
 
 // Importa handlers de IPC para ativar as rotas
+import './ipc/tips'
 import './ipc/config'
 import './ipc/audio'
 import './ipc/transcriptions'
@@ -20,6 +22,18 @@ ipcMain.on('open-config', () => {
   } else {
     mainWindow.show()
     mainWindow.focus()
+  }
+})
+
+ipcMain.on('toggle-popover', () => {
+  console.log('Toggling popover visibility')
+  if (popoverWindow) {
+    if (popoverWindow.isVisible()) {
+      popoverWindow.hide()
+    } else {
+      popoverWindow.show()
+      popoverWindow.focus()
+    }
   }
 })
 
@@ -41,7 +55,7 @@ app.whenReady().then(() => {
       mainWindow.show()
       mainWindow.focus()
     }
-  })
+  }, popoverWindow)
   // Registra atalhos globais vinculados ao popover
   registerGlobalShortcuts(popoverWindow)
 

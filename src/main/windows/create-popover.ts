@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, desktopCapturer, session } from 'electron'
 import path from 'path'
 import { is } from '@electron-toolkit/utils'
 
@@ -12,7 +12,7 @@ export function createPopover(): BrowserWindow {
 
   popoverWindow = new BrowserWindow({
     width: 600,
-    height: 300,
+    height: 400,
     frame: false,
     transparent: true,
     alwaysOnTop: true,
@@ -21,7 +21,9 @@ export function createPopover(): BrowserWindow {
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       contextIsolation: true,
-      sandbox: false
+      sandbox: false,
+      nodeIntegration: true,
+      webSecurity: false // Necessário para carregar URLs locais
     }
   })
 
@@ -39,6 +41,27 @@ export function createPopover(): BrowserWindow {
     e.preventDefault()
     popoverWindow?.unmaximize() // Garante que não fique maximizado
   })
+
+  session.defaultSession.setDisplayMediaRequestHandler(
+    (_request, callback) => {
+      desktopCapturer.getSources({ types: ['window', 'screen'] }).then((sources) => {
+        sources.forEach((source) => console.log('Fonte:', source.name, 'ID:', source.id))
+        // Aqui você pode escolher uma janela específica (ex: Meet, Zoom)
+        const meetWindow = sources.find((src) => {
+          console.log(src.name)
+          return src.name.includes('Screen 1') // Caso queira capturar a aba do navegador
+        })
+
+        console.log('Janela Meet:', meetWindow)
+        if (meetWindow) {
+          callback({ video: meetWindow, audio: 'loopback' })
+        } else {
+          callback({ video: sources[0], audio: 'loopback' }) // Fallback
+        }
+      })
+    },
+    { useSystemPicker: true }
+  )
 
   return popoverWindow
 }

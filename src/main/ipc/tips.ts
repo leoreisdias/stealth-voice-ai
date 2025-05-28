@@ -1,11 +1,13 @@
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { generateText } from 'ai'
+import { ipcMain } from 'electron'
+import { logIPC } from '../utils/logger'
 
 const openRouter = createOpenRouter({
-  apiKey: ''
+  apiKey: process.env.OPENROUTER_API_KEY
 })
 
-export const generateTip = async (userPrompt: string, mediaPrompt: string): Promise<string> => {
+const generateTip = async (userPrompt: string, mediaPrompt: string): Promise<string> => {
   const model = openRouter('google/gemini-2.0-flash-001')
 
   const response = await generateText({
@@ -45,3 +47,18 @@ Context about the user:
 
   return response.text
 }
+
+ipcMain.handle(
+  'tips:generate',
+  async (_event, prompts: { userPrompt: string; mediaPrompt: string }) => {
+    logIPC('tips:generate', 'in', prompts)
+    try {
+      const tip = await generateTip(prompts.userPrompt, prompts.mediaPrompt)
+      logIPC('tips:generate', 'out', { tip })
+      return tip
+    } catch (error) {
+      logIPC('tips:generate', 'out', error)
+      return ''
+    }
+  }
+)

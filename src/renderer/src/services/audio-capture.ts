@@ -10,7 +10,6 @@ export class AudioCapture {
     this.mediaRecorder.ondataavailable = (e) => {
       this.audioChunks.push(e.data)
     }
-
     this.mediaRecorder.start()
   }
 

@@ -4,25 +4,31 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
 const api = {
-  openConfig: () => window.electron.ipcRenderer.send('open-config'),
+  openConfig: () => electronAPI.ipcRenderer.send('open-config'),
+  togglePopover: () => electronAPI.ipcRenderer.send('toggle-popover'),
+  tips: {
+    generate: (prompts: { userPrompt: string; mediaPrompt: string }) =>
+      electronAPI.ipcRenderer.invoke('tips:generate', prompts)
+  },
   config: {
-    set: (key: string, value: any) => window.electron.ipcRenderer.invoke('config:set', key, value),
-    get: (key: string) => window.electron.ipcRenderer.invoke('config:get', key),
-    getAll: () => window.electron.ipcRenderer.invoke('config:get-all')
+    set: (key: string, value: any) => electronAPI.ipcRenderer.invoke('config:set', key, value),
+    get: (key: string) => electronAPI.ipcRenderer.invoke('config:get', key),
+    getAll: () => electronAPI.ipcRenderer.invoke('config:get-all')
   },
   audio: {
+    transcribe: (arrayBuffer: ArrayBuffer) =>
+      electronAPI.ipcRenderer.invoke('audio:transcribe', arrayBuffer),
     save: (filename: string, data: Buffer) =>
-      window.electron.ipcRenderer.invoke('audio:save', filename, data),
-    list: () => window.electron.ipcRenderer.invoke('audio:list'),
-    delete: (filename: string) => window.electron.ipcRenderer.invoke('audio:delete', filename)
+      electronAPI.ipcRenderer.invoke('audio:save', filename, data),
+    list: () => electronAPI.ipcRenderer.invoke('audio:list'),
+    delete: (filename: string) => electronAPI.ipcRenderer.invoke('audio:delete', filename)
   },
   transcription: {
     save: (filename: string, content: string) =>
-      window.electron.ipcRenderer.invoke('transcription:save', filename, content),
-    list: () => window.electron.ipcRenderer.invoke('transcription:list'),
-    read: (filename: string) => window.electron.ipcRenderer.invoke('transcription:read', filename),
-    delete: (filename: string) =>
-      window.electron.ipcRenderer.invoke('transcription:delete', filename)
+      electronAPI.ipcRenderer.invoke('transcription:save', filename, content),
+    list: () => electronAPI.ipcRenderer.invoke('transcription:list'),
+    read: (filename: string) => electronAPI.ipcRenderer.invoke('transcription:read', filename),
+    delete: (filename: string) => electronAPI.ipcRenderer.invoke('transcription:delete', filename)
   }
 }
 
