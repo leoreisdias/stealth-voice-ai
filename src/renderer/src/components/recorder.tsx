@@ -1,14 +1,67 @@
 import { audioCapture } from '@renderer/services/audio-capture'
 import { normalizeAudioBlob } from '@renderer/services/normalizer'
 import { windowAudioCapture } from '@renderer/services/system-audio'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Mic } from 'lucide-react'
 import { BoxMotion } from './ui/motion'
 import { usePopoverContext } from '@renderer/contexts/popover'
+import { Box } from '@styled-system/jsx'
+
+const useRecordTimer = () => {
+  const [recordingTime, setRecordingTime] = useState(0)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  const startTimer = () => {
+    setRecordingTime(0)
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+    }
+
+    intervalRef.current = setInterval(() => {
+      setRecordingTime((prev) => prev + 1)
+    }, 1000)
+  }
+
+  const stopTimer = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+  }
+
+  const resetTimer = () => {
+    stopTimer()
+    setRecordingTime(0)
+  }
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    }
+  }, [])
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+  }
+
+  return {
+    recordingTime,
+    formattedTime: formatTime(recordingTime),
+    startTimer,
+    stopTimer,
+    resetTimer
+  }
+}
 
 export function Recorder() {
   const [isRecording, setIsRecording] = useState(false)
   const { setCurrentTip, setIsProcessing } = usePopoverContext()
+  const { formattedTime, startTimer, stopTimer, resetTimer } = useRecordTimer()
 
   const handleUserStop = async () => {
     const audioBlob = await audioCapture.stop()
@@ -43,6 +96,7 @@ export function Recorder() {
 
   const handleStop = async () => {
     try {
+      stopTimer()
       setCurrentTip('')
       setIsProcessing(true)
       const [userTranscript, mediaTranscript] = await Promise.all([
@@ -57,6 +111,7 @@ export function Recorder() {
       setCurrentTip(tip)
     } finally {
       setIsProcessing(false)
+      resetTimer()
       console.log('Recording stopped')
     }
   }
@@ -70,37 +125,49 @@ export function Recorder() {
     await windowAudioCapture.start()
 
     setIsRecording(true)
+    startTimer()
   }
 
   return (
-    <BoxMotion
-      w="24px"
-      h="24px"
-      bg="#007AFF"
-      borderRadius="50%"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      cursor="pointer"
-      style={{
-        // @ts-ignore electron needs this
-        WebkitAppRegion: 'no-drag'
-      }}
-      onClick={() => {
-        toggle()
-      }}
-      animate={
-        isRecording
-          ? { backgroundColor: ['#ff0000', '#ffffff', '#ff0000'] }
-          : { backgroundColor: '#007AFF' }
-      }
-      transition={
-        isRecording ? { repeat: Infinity, duration: 1.2, ease: 'easeIn', repeatType: 'loop' } : {}
-      }
-    >
-      <Mic size={14} />
-      {isRecording ?? 'sim'}
-    </BoxMotion>
+    <>
+      <BoxMotion
+        w="24px"
+        h="24px"
+        bg="#007AFF"
+        borderRadius="50%"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        cursor="pointer"
+        style={{
+          // @ts-ignore electron needs this
+          WebkitAppRegion: 'no-drag'
+        }}
+        onClick={() => {
+          toggle()
+        }}
+        animate={
+          isRecording
+            ? { backgroundColor: ['#ff0000', '#ffffff', '#ff0000'] }
+            : { backgroundColor: '#007AFF' }
+        }
+        transition={
+          isRecording ? { repeat: Infinity, duration: 1.2, ease: 'easeIn', repeatType: 'loop' } : {}
+        }
+      >
+        <Mic size={14} />
+        {isRecording ?? 'sim'}
+      </BoxMotion>
+      {/* Timer */}
+      <Box
+        color="fg.muted"
+        fontSize="14px"
+        fontWeight="500"
+        fontFamily="system-ui, -apple-system, sans-serif"
+      >
+        {formattedTime}
+      </Box>
+    </>
     // <Flex w="full" justify={'center'} mt={10}>
     //   {!isRecording ? (
     //     <ButtonGlow onClick={handleStart}>🎙️ Iniciar Gravação</ButtonGlow>

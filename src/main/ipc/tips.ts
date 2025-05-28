@@ -31,11 +31,6 @@ If no specific objection or challenge is detected, suggest a confidence-boosting
 **Do not explain your reasoning, just provide the suggestion directly.**
 
 If the content of the transcripts does not indicate a clear objection or question, suggest confidence-boosting statements or techniques to keep the conversation under the user’s control.
-
-Context about the user:
-- He is a front-end developer focused on React and Next.js.
-- He is a senior with 4+ years of experience.
-- Software Engineer (FE-Heavy) with 4+ years of experience in frontend and backend development, specializing in React.js ecosystem, including Next.js, and also with deep experience in Node.js and Nest.js. Proven track record of building systems from scratch, optimizing platforms, and delivering impactful, user-focused solutions. Adept at thriving in high-paced environments, collaborating with cross-functional teams, bridging product and engineering to align technical initiatives with business goals, and driving secure, high-performance systems. Recognized for technical excellence, innovation, and a user-first approach that delivers strategic outcomes
 `,
     messages: [
       {

@@ -52,16 +52,6 @@ export default function Popover() {
           <Recorder />
         </PopoverContext.Provider>
 
-        {/* Timer */}
-        <Box
-          color="fg.muted"
-          fontSize="14px"
-          fontWeight="500"
-          fontFamily="system-ui, -apple-system, sans-serif"
-        >
-          00:00
-        </Box>
-
         {/* Separator */}
         <Divider orientation="vertical" borderColor="rgba(0, 0, 0, 0.1)" h="20px" />
 
