@@ -27,7 +27,9 @@ export default tseslint.config(
       ...eslintPluginReactRefresh.configs.vite.rules,
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'off',
-      'react/display-name': 'off'
+      'react/display-name': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/triple-slash-reference': 'off'
     }
   },
   eslintConfigPrettier

@@ -64,7 +64,7 @@ export function Recorder() {
   return (
     <Flex w="full" justify={'center'} mt={10}>
       {!isRecording ? (
-        <ButtonGlow>🎙️ Iniciar Gravação</ButtonGlow>
+        <ButtonGlow onClick={handleStart}>🎙️ Iniciar Gravação</ButtonGlow>
       ) : (
         <button onClick={handleStop}>⏹️ Parar Gravação</button>
       )}

@@ -28,7 +28,7 @@
     "@electron-toolkit/utils": "^4.0.0",
     "@openrouter/ai-sdk-provider": "^0.4.6",
     "ai": "^4.3.16",
-    "electron-store": "^10.0.1",
+    "electron-store": "^8.2.0",
     "electron-updater": "^6.3.9",
     "lucide-react": "^0.511.0",
     "motion": "^12.12.1",

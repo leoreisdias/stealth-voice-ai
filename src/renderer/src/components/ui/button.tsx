@@ -46,9 +46,10 @@ const ButtonSpinner = () => (
   </Center>
 )
 
-export const ButtonGlow = ({ children }: { children: ReactNode }) => {
+export const ButtonGlow = ({ children, onClick }: { children: ReactNode; onClick: () => void }) => {
   return (
     <button
+      onClick={onClick}
       className={css({
         position: 'relative',
         display: 'inline-flex',
