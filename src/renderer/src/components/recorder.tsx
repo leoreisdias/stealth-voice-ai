@@ -109,6 +109,7 @@ export function Recorder() {
         userPrompt: userTranscript
       })
       setCurrentTip(tip)
+      window.api.popover.expand()
     } finally {
       setIsProcessing(false)
       resetTimer()
@@ -148,7 +149,7 @@ export function Recorder() {
         }}
         animate={
           isRecording
-            ? { backgroundColor: ['#ff0000', '#ffffff', '#ff0000'] }
+            ? { backgroundColor: ['#ff0000', '#007AFF', '#ff0000'] }
             : { backgroundColor: '#007AFF' }
         }
         transition={

@@ -4,6 +4,9 @@ declare global {
   interface Window {
     electron: typeof import('@electron-toolkit/preload').electronAPI
     api: {
+      popover: {
+        expand: () => void
+      }
       openConfig: () => void
       togglePopover: () => void
       tips: {

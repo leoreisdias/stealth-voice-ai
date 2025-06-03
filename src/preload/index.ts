@@ -4,6 +4,9 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
 const api = {
+  popover: {
+    expand: () => electronAPI.ipcRenderer.send('expand')
+  },
   openConfig: () => electronAPI.ipcRenderer.send('open-config'),
   togglePopover: () => electronAPI.ipcRenderer.send('toggle-popover'),
   tips: {

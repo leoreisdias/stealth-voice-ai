@@ -16,6 +16,7 @@ export function createMain(): BrowserWindow {
   mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
+    title: 'Stealth AI',
     frame: true, // Mantém a barra padrão do sistema
     autoHideMenuBar: true, // Oculta automaticamente o menu
     webPreferences: {

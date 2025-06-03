@@ -1,8 +1,15 @@
-import { BrowserWindow, desktopCapturer, session } from 'electron'
+import { BrowserWindow, desktopCapturer, ipcMain, session } from 'electron'
 import path from 'path'
 import { is } from '@electron-toolkit/utils'
 
 let popoverWindow: BrowserWindow | null = null
+
+ipcMain.on('expand', (_) => {
+  if (!popoverWindow) return
+
+  const [width] = popoverWindow.getSize()
+  popoverWindow.setSize(width, 300)
+})
 
 export function createPopover(): BrowserWindow {
   if (popoverWindow) {
@@ -12,11 +19,11 @@ export function createPopover(): BrowserWindow {
 
   popoverWindow = new BrowserWindow({
     width: 600,
-    height: 400,
+    height: 100,
     frame: false,
     transparent: true,
     alwaysOnTop: true,
-    resizable: true,
+    resizable: false,
     skipTaskbar: true,
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
