@@ -1,6 +1,7 @@
 /// <reference path="./index.d.ts" />
 import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { CoreMessage } from 'ai'
 
 // Custom APIs for renderer
 const api = {
@@ -10,7 +11,7 @@ const api = {
   openConfig: () => electronAPI.ipcRenderer.send('open-config'),
   togglePopover: () => electronAPI.ipcRenderer.send('toggle-popover'),
   tips: {
-    generate: (prompts: { userPrompt: string; mediaPrompt: string }) =>
+    generate: (prompts: { messages: CoreMessage[] }) =>
       electronAPI.ipcRenderer.invoke('tips:generate', prompts)
   },
   config: {

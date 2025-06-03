@@ -1,8 +1,9 @@
-import { createContext, useContext } from 'react'
+import { CoreMessage } from 'ai'
+import { createContext, Dispatch, SetStateAction, useContext } from 'react'
 
 type ContextProps = {
-  currentTip: string
-  setCurrentTip: (tip: string) => void
+  setMessages: Dispatch<SetStateAction<CoreMessage[]>>
+  messages: CoreMessage[]
   isProcessing: boolean
   setIsProcessing: (processing: boolean) => void
 }

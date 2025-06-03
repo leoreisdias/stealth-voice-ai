@@ -6,6 +6,7 @@ import { BoxMotion } from '@renderer/components/ui/motion'
 import { Text } from '@renderer/components/ui/text'
 import { PopoverContext } from '@renderer/contexts/popover'
 import { Flex, Box, Divider } from '@styled-system/jsx'
+import { CoreMessage } from 'ai'
 import { Cog, GripVertical } from 'lucide-react'
 import { AnimatePresence } from 'motion/react'
 import { useState } from 'react'
@@ -13,8 +14,11 @@ import ReactMarkdown from 'react-markdown'
 
 // src/renderer/pages/Popover.tsx
 export default function Popover() {
-  const [currentTip, setCurrentTip] = useState<string>('')
+  const [messages, setMessages] = useState<CoreMessage[]>([])
+  // const [currentTip, setCurrentTip] = useState<string>('')
   const [isProcessing, setIsProcessing] = useState<boolean>(false)
+
+  const aiLastMessage = messages[messages.length - 1]
 
   return (
     <Flex
@@ -25,6 +29,7 @@ export default function Popover() {
       flexDirection="column"
       gap="8px"
       p="8px"
+      // border="1px solid red"
       style={{
         // @ts-ignore electron needs this
         WebkitAppRegion: 'no-drag'
@@ -45,9 +50,7 @@ export default function Popover() {
           WebkitBackdropFilter: 'blur(20px)'
         }}
       >
-        <PopoverContext.Provider
-          value={{ currentTip, setCurrentTip, isProcessing, setIsProcessing }}
-        >
+        <PopoverContext.Provider value={{ setMessages, isProcessing, setIsProcessing, messages }}>
           {/* Play/Pause Button */}
           <Recorder />
         </PopoverContext.Provider>
@@ -118,6 +121,7 @@ export default function Popover() {
         <Button
           variant="ghost"
           size="sm"
+          onClick={() => window.api.openConfig()}
           p={1}
           cursor="pointer"
           style={{
@@ -154,7 +158,7 @@ export default function Popover() {
             <Ripple />
           </Box>
         )}
-        {!!currentTip && (
+        {!isProcessing && messages.length > 0 && !!messages[messages.length - 1] && (
           <BoxMotion
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -220,59 +224,148 @@ export default function Popover() {
               fontFamily="system-ui, -apple-system, sans-serif"
               fontWeight={400}
             >
-              <ReactMarkdown
-                components={{
-                  h1: ({ children }) => (
-                    <Text as="h1" fontSize="18px" fontWeight="700" color="black" mb="12px" mt="8px">
-                      {children}
-                    </Text>
-                  ),
-                  h2: ({ children }) => (
-                    <Text
-                      as="h2"
-                      fontSize="16px"
-                      fontWeight="600"
-                      color="black"
-                      mb="10px"
-                      mt="16px"
+              {typeof aiLastMessage.content === 'string' ? (
+                <ReactMarkdown
+                  components={{
+                    h1: ({ children }) => (
+                      <Text
+                        as="h1"
+                        fontSize="18px"
+                        fontWeight="700"
+                        color="black"
+                        mb="12px"
+                        mt="8px"
+                      >
+                        {children}
+                      </Text>
+                    ),
+                    h2: ({ children }) => (
+                      <Text
+                        as="h2"
+                        fontSize="16px"
+                        fontWeight="600"
+                        color="black"
+                        mb="10px"
+                        mt="16px"
+                      >
+                        {children}
+                      </Text>
+                    ),
+                    h3: ({ children }) => (
+                      <Text
+                        as="h3"
+                        fontSize="15px"
+                        fontWeight="600"
+                        color="black"
+                        mb="8px"
+                        mt="12px"
+                      >
+                        {children}
+                      </Text>
+                    ),
+                    p: ({ children }) => (
+                      <Text as="p" mb="12px" lineHeight="1.6">
+                        {children}
+                      </Text>
+                    ),
+                    ol: ({ children }) => (
+                      <Text as="ol" ml="20px" mb="12px">
+                        {children}
+                      </Text>
+                    ),
+                    ul: ({ children }) => (
+                      <Text as="ul" ml="20px" mb="12px">
+                        {children}
+                      </Text>
+                    ),
+                    li: ({ children }) => (
+                      <Text as="li" mb="4px" lineHeight="1.5" listStyle={'disc'}>
+                        {children}
+                      </Text>
+                    ),
+                    strong: ({ children }) => (
+                      <Text as="strong" fontWeight="600" color="black">
+                        {children}
+                      </Text>
+                    )
+                  }}
+                >
+                  {aiLastMessage.content}
+                </ReactMarkdown>
+              ) : (
+                aiLastMessage.content
+                  .filter((part) => part.type === 'text')
+                  .map((part, partIndex) => (
+                    <ReactMarkdown
+                      components={{
+                        h1: ({ children }) => (
+                          <Text
+                            as="h1"
+                            fontSize="18px"
+                            fontWeight="700"
+                            color="black"
+                            mb="12px"
+                            mt="8px"
+                          >
+                            {children}
+                          </Text>
+                        ),
+                        h2: ({ children }) => (
+                          <Text
+                            as="h2"
+                            fontSize="16px"
+                            fontWeight="600"
+                            color="black"
+                            mb="10px"
+                            mt="16px"
+                          >
+                            {children}
+                          </Text>
+                        ),
+                        h3: ({ children }) => (
+                          <Text
+                            as="h3"
+                            fontSize="15px"
+                            fontWeight="600"
+                            color="black"
+                            mb="8px"
+                            mt="12px"
+                          >
+                            {children}
+                          </Text>
+                        ),
+                        p: ({ children }) => (
+                          <Text as="p" mb="12px" lineHeight="1.6">
+                            {children}
+                          </Text>
+                        ),
+                        ol: ({ children }) => (
+                          <Text as="ol" ml="20px" mb="12px">
+                            {children}
+                          </Text>
+                        ),
+                        ul: ({ children }) => (
+                          <Text as="ul" ml="20px" mb="12px">
+                            {children}
+                          </Text>
+                        ),
+                        li: ({ children }) => (
+                          <Text as="li" mb="4px" lineHeight="1.5" listStyle={'disc'}>
+                            {children}
+                          </Text>
+                        ),
+                        strong: ({ children }) => (
+                          <Text as="strong" fontWeight="600" color="black">
+                            {children}
+                          </Text>
+                        )
+                      }}
+                      key={partIndex}
                     >
-                      {children}
-                    </Text>
-                  ),
-                  h3: ({ children }) => (
-                    <Text as="h3" fontSize="15px" fontWeight="600" color="black" mb="8px" mt="12px">
-                      {children}
-                    </Text>
-                  ),
-                  p: ({ children }) => (
-                    <Text as="p" mb="12px" lineHeight="1.6">
-                      {children}
-                    </Text>
-                  ),
-                  ol: ({ children }) => (
-                    <Text as="ol" ml="20px" mb="12px">
-                      {children}
-                    </Text>
-                  ),
-                  ul: ({ children }) => (
-                    <Text as="ul" ml="20px" mb="12px">
-                      {children}
-                    </Text>
-                  ),
-                  li: ({ children }) => (
-                    <Text as="li" mb="4px" lineHeight="1.5" listStyle={'disc'}>
-                      {children}
-                    </Text>
-                  ),
-                  strong: ({ children }) => (
-                    <Text as="strong" fontWeight="600" color="black">
-                      {children}
-                    </Text>
-                  )
-                }}
-              >
-                {currentTip}
-              </ReactMarkdown>
+                      {part.text}
+                    </ReactMarkdown>
+                  ))
+              )}
             </Box>
           </BoxMotion>
         )}

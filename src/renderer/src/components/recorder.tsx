@@ -6,6 +6,7 @@ import { Mic } from 'lucide-react'
 import { BoxMotion } from './ui/motion'
 import { usePopoverContext } from '@renderer/contexts/popover'
 import { Box } from '@styled-system/jsx'
+import { CoreMessage } from 'ai'
 
 const useRecordTimer = () => {
   const [recordingTime, setRecordingTime] = useState(0)
@@ -60,7 +61,7 @@ const useRecordTimer = () => {
 
 export function Recorder() {
   const [isRecording, setIsRecording] = useState(false)
-  const { setCurrentTip, setIsProcessing } = usePopoverContext()
+  const { setMessages, setIsProcessing, messages } = usePopoverContext()
   const { formattedTime, startTimer, stopTimer, resetTimer } = useRecordTimer()
 
   const handleUserStop = async () => {
@@ -97,19 +98,24 @@ export function Recorder() {
   const handleStop = async () => {
     try {
       stopTimer()
-      setCurrentTip('')
+      window.api.popover.expand()
       setIsProcessing(true)
       const [userTranscript, mediaTranscript] = await Promise.all([
         handleUserStop(),
         handleMediaStop()
       ])
 
-      const tip = await window.api.tips.generate({
-        mediaPrompt: mediaTranscript,
-        userPrompt: userTranscript
-      })
-      setCurrentTip(tip)
-      window.api.popover.expand()
+      const newMessages: CoreMessage[] = [
+        ...messages,
+        {
+          role: 'user',
+          content: `Most recente user Transcript: ${userTranscript} \n\n Most recent others transcript: ${mediaTranscript};`
+        }
+      ]
+
+      const tip = await window.api.tips.generate({ messages: newMessages })
+
+      setMessages(tip)
     } finally {
       setIsProcessing(false)
       resetTimer()

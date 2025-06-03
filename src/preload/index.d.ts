@@ -1,3 +1,5 @@
+import { CoreMessage } from 'ai'
+
 export {}
 
 declare global {
@@ -10,7 +12,7 @@ declare global {
       openConfig: () => void
       togglePopover: () => void
       tips: {
-        generate: (prompts: { userPrompt: string; mediaPrompt: string }) => Promise<string>
+        generate: (prompts: { messages: CoreMessage[] }) => Promise<CoreMessage[]>
       }
       config: {
         set: (key: string, value: any) => Promise<any>
