@@ -6,9 +6,7 @@ import { Input } from '@renderer/components/ui/input'
 import { ErrorBoundary } from '@renderer/components/error-boundary'
 import { usePopoverAI } from '@renderer/contexts/popover-contexts'
 import { PopoverProvider } from '@renderer/contexts/popover-provider'
-import { processLastSegment } from '@renderer/services/processer'
 import { Flex, Box, Divider } from '@styled-system/jsx'
-import { CoreMessage } from 'ai'
 import { useState } from 'react'
 
 const ChatInput = () => {
