@@ -67,6 +67,7 @@ export function Recorder() {
 
   const { setMessages, setIsProcessing, messages } = usePopoverContext()
   const { formattedTime, startTimer, stopTimer, resetTimer } = useRecordTimer()
+  const messagesRef = useRef(messages)
 
   const processingIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const cleanupIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -122,11 +123,7 @@ export function Recorder() {
       }
 
       // Use callback para garantir estado atual
-      let currentMessages: CoreMessage[] = []
-      setMessages((prevMessages) => {
-        currentMessages = [...prevMessages, newMessage]
-        return currentMessages
-      })
+      const currentMessages = [...messagesRef.current, newMessage]
 
       // Gerar dica
       const tip = await window.api.tips.generate({
@@ -260,6 +257,10 @@ export function Recorder() {
     }
   }, [])
 
+  useEffect(() => {
+    messagesRef.current = messages
+  }, [messages])
+
   return (
     <>
       <BoxMotion
@@ -278,6 +279,7 @@ export function Recorder() {
         onClick={() => {
           toggle()
         }}
+        whileHover={{ scale: 1.1 }}
         animate={
           isAutoProcessing
             ? { backgroundColor: ['#ff0000', '#007AFF', '#ff0000'] }
