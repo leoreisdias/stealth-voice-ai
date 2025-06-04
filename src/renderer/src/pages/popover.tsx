@@ -7,7 +7,7 @@ import { Text } from '@renderer/components/ui/text'
 import { PopoverContext } from '@renderer/contexts/popover'
 import { Flex, Box, Divider } from '@styled-system/jsx'
 import { CoreMessage } from 'ai'
-import { Cog, GripVertical } from 'lucide-react'
+import { Cog, Eraser, GripVertical } from 'lucide-react'
 import { AnimatePresence } from 'motion/react'
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
@@ -15,10 +15,38 @@ import ReactMarkdown from 'react-markdown'
 // src/renderer/pages/Popover.tsx
 export default function Popover() {
   const [messages, setMessages] = useState<CoreMessage[]>([])
+  const [inputValue, setInputValue] = useState<string>('')
+  const [askingAI, setAskingAI] = useState<boolean>(false)
   // const [currentTip, setCurrentTip] = useState<string>('')
   const [isProcessing, setIsProcessing] = useState<boolean>(false)
 
   const aiLastMessage = messages[messages.length - 1]
+
+  const isLoadingFirstResponse = messages.length <= 1 && isProcessing
+
+  const onAskAI = async () => {
+    if (!inputValue.trim()) return
+
+    setAskingAI(true)
+
+    const prompt: CoreMessage[] = [
+      ...messages,
+      {
+        role: 'user',
+        content: `User comment to you (assistant): ${inputValue}`
+      }
+    ]
+
+    setInputValue('')
+
+    const newMsgs = await window.api.tips.generate({
+      messages: prompt
+    })
+
+    setAskingAI(false)
+
+    setMessages(newMsgs)
+  }
 
   return (
     <Flex
@@ -61,7 +89,8 @@ export default function Popover() {
         {/* Ask AI Section */}
         <Flex alignItems="center" gap="6px" flex="1">
           <Input
-            placeholder="Ask AI"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
             size="sm"
             border="none"
             flex="1"
@@ -70,22 +99,26 @@ export default function Popover() {
               boxShadow: 'none'
             }}
           />
-          <Box
+          <Button
+            variant="ghost"
             color="fg.muted"
+            size="sm"
             fontSize="14px"
             fontWeight="500"
             fontFamily="system-ui, -apple-system, sans-serif"
+            onClick={onAskAI}
+            loading={askingAI}
           >
             Ask AI
-          </Box>
-          <Flex alignItems="center" gap="2px">
+          </Button>
+          {/* <Flex alignItems="center" gap="2px">
             <Box color="rgba(0, 0, 0, 0.5)" fontSize="12px" fontWeight="500">
               ⌘
             </Box>
             <Box color="rgba(0, 0, 0, 0.5)" fontSize="12px" fontWeight="500">
               ⌥
             </Box>
-          </Flex>
+          </Flex> */}
         </Flex>
 
         {/* Separator */}
@@ -107,14 +140,14 @@ export default function Popover() {
           >
             Show/Hide
           </Button>
-          <Flex alignItems="center" gap="2px">
+          {/* <Flex alignItems="center" gap="2px">
             <Box color="rgba(0, 0, 0, 0.5)" fontSize="12px" fontWeight="500">
               ⌘
             </Box>
             <Box color="rgba(0, 0, 0, 0.5)" fontSize="12px" fontWeight="500">
               \
             </Box>
-          </Flex>
+          </Flex> */}
         </Flex>
 
         {/* Settings Icon */}
@@ -131,6 +164,25 @@ export default function Popover() {
         >
           <Box color="rgba(0, 0, 0, 0.6)" fontSize="16px">
             <Cog size={20} />
+          </Box>
+        </Button>
+        {/* Reset Icon */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            setMessages([])
+          }}
+          p={0}
+          w="fit"
+          cursor="pointer"
+          style={{
+            // @ts-ignore electron needs this
+            WebkitAppRegion: 'no-drag'
+          }}
+        >
+          <Box color="rgba(0, 0, 0, 0.6)">
+            <Eraser size={18} />
           </Box>
         </Button>
         {/* Settings Icon */}
@@ -153,12 +205,12 @@ export default function Popover() {
       <AnimatePresence>
         {/* Markdown Content Popover */}
 
-        {isProcessing && (
+        {isLoadingFirstResponse && (
           <Box w="100%" h="400px" position="relative" bg="rgba(255, 255, 255, 0.2)" rounded="md">
             <Ripple />
           </Box>
         )}
-        {!isProcessing && messages.length > 0 && !!messages[messages.length - 1] && (
+        {!isLoadingFirstResponse && messages.length > 0 && !!messages[messages.length - 1] && (
           <BoxMotion
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
