@@ -218,10 +218,29 @@ export function Recorder() {
     return () => {
       if (processingIntervalRef.current) {
         clearInterval(processingIntervalRef.current)
+        processingIntervalRef.current = null
       }
       if (cleanupIntervalRef.current) {
         clearInterval(cleanupIntervalRef.current)
+        cleanupIntervalRef.current = null
       }
+
+      // TODO: ANALISAR...
+      // ✅ Parar capturas apenas no unmount (não no cleanup periódico)
+      const stopCaptures = async () => {
+        try {
+          if (audioCapture.isRecording()) {
+            await audioCapture.stop()
+          }
+          if (windowAudioCapture.isRecording()) {
+            await windowAudioCapture.stop()
+          }
+        } catch (error) {
+          console.error('Erro durante cleanup no unmount:', error)
+        }
+      }
+
+      stopCaptures()
     }
   }, [])
 
