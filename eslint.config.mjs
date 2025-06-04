@@ -32,7 +32,8 @@ export default tseslint.config(
       '@typescript-eslint/triple-slash-reference': 'off',
       'prefer-const': 'off',
       'react-refresh/only-export-components': 'off',
-      '@typescript-eslint/no-empty-object-type': 'off'
+      '@typescript-eslint/no-empty-object-type': 'off',
+      'react/prop-types': 'off' // Disable prop-types as we use TypeScript for type checking
     }
   },
   eslintConfigPrettier
