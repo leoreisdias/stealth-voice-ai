@@ -3,6 +3,7 @@ import { Assistant } from '@renderer/components/popover/messages'
 import { Recorder } from '@renderer/components/popover/recorder'
 import { Button } from '@renderer/components/ui/button'
 import { Input } from '@renderer/components/ui/input'
+import { ErrorBoundary } from '@renderer/components/error-boundary'
 import { usePopoverAI } from '@renderer/contexts/popover-contexts'
 import { PopoverProvider } from '@renderer/contexts/popover-provider'
 import { processLastSegment } from '@renderer/services/processer'
@@ -24,7 +25,7 @@ const ChatInput = () => {
     setAskingAI(true)
     pauseAutoProcessing()
 
-    const prompt: CoreMessage[] = messages
+    const prompt = messages
 
     // const { systemTranscript, userTranscript } = await processLastSegment()
     // if (!!systemTranscript || !!userTranscript) {
@@ -124,7 +125,9 @@ function Popover() {
           WebkitBackdropFilter: 'blur(20px)'
         }}
       >
-        <Recorder />
+        <ErrorBoundary>
+          <Recorder />
+        </ErrorBoundary>
 
         <Divider orientation="vertical" borderColor="rgba(0, 0, 0, 0.1)" h="20px" />
 
@@ -135,7 +138,9 @@ function Popover() {
         <Configs />
       </Flex>
 
-      <Assistant />
+      <ErrorBoundary>
+        <Assistant />
+      </ErrorBoundary>
     </Flex>
   )
 }
