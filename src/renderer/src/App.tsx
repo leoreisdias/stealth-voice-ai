@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Home from './pages'
-import Popover from './pages/popover'
+import PopoverPage from './pages/popover'
 
 function App(): React.JSX.Element {
   const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
@@ -9,7 +9,7 @@ function App(): React.JSX.Element {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/popover" element={<Popover />} />
+        <Route path="/popover" element={<PopoverPage />} />
       </Routes>
     </BrowserRouter>
   )

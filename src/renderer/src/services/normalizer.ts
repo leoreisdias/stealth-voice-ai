@@ -1,4 +1,10 @@
+import { AUDIO_PROCESSING_CONFIG } from '@renderer/config/audio-processing'
+
 export async function normalizeAudioBlob(blob: Blob): Promise<Blob> {
+  const isAudioSmall = blob.size < AUDIO_PROCESSING_CONFIG.MIN_AUDIO_SIZE
+
+  if (isAudioSmall) return blob
+
   const arrayBuffer = await blob.arrayBuffer()
 
   const audioContext = new AudioContext()
