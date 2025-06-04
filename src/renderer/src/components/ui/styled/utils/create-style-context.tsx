@@ -5,10 +5,10 @@ import {
   type RefAttributes,
   createContext,
   forwardRef,
-  useContext,
+  useContext
 } from 'react'
-import { cx } from 'styled-system/css'
-import { type StyledComponent, isCssProperty, styled } from 'styled-system/jsx'
+import { cx } from '@styled-system/css'
+import { type StyledComponent, isCssProperty, styled } from '@styled-system/jsx'
 
 type Props = Record<string, unknown>
 type Recipe = {
@@ -41,14 +41,14 @@ export const createStyleContext = <R extends Recipe>(recipe: R) => {
   const withProvider = <T, P extends { className?: string | undefined }>(
     Component: ElementType,
     slot: Slot<R>,
-    options?: Options,
+    options?: Options
   ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>> => {
     const StyledComponent = styled(
       Component,
       {},
       {
-        shouldForwardProp: (prop, variantKeys) => shouldForwardProp(prop, variantKeys, options),
-      },
+        shouldForwardProp: (prop, variantKeys) => shouldForwardProp(prop, variantKeys, options)
+      }
     ) as StyledComponent<ElementType>
     const StyledSlotProvider = forwardRef<T, P>((props, ref) => {
       const [variantProps, otherProps] = recipe.splitVariantProps(props)
@@ -64,7 +64,7 @@ export const createStyleContext = <R extends Recipe>(recipe: R) => {
         </StyleContext.Provider>
       )
     })
-    // @ts-expect-error
+    // @ts-expect-error need to set displayName for better debugging
     StyledSlotProvider.displayName = Component.displayName || Component.name
 
     return StyledSlotProvider
@@ -72,7 +72,7 @@ export const createStyleContext = <R extends Recipe>(recipe: R) => {
 
   const withContext = <T, P extends { className?: string | undefined }>(
     Component: ElementType,
-    slot: Slot<R>,
+    slot: Slot<R>
   ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>> => {
     const StyledComponent = styled(Component)
     const StyledSlotComponent = forwardRef<T, P>((props, ref) => {
@@ -81,7 +81,7 @@ export const createStyleContext = <R extends Recipe>(recipe: R) => {
         <StyledComponent {...props} ref={ref} className={cx(slotStyles?.[slot], props.className)} />
       )
     })
-    // @ts-expect-error
+    // @ts-expect-error need to set displayName for better debugging
     StyledSlotComponent.displayName = Component.displayName || Component.name
 
     return StyledSlotComponent
@@ -90,6 +90,6 @@ export const createStyleContext = <R extends Recipe>(recipe: R) => {
   return {
     withRootProvider,
     withProvider,
-    withContext,
+    withContext
   }
 }
