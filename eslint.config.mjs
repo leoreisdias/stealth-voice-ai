@@ -30,7 +30,9 @@ export default tseslint.config(
       'react/display-name': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/triple-slash-reference': 'off',
-      'prefer-const': 'off'
+      'prefer-const': 'off',
+      'react-refresh/only-export-components': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off'
     }
   },
   eslintConfigPrettier
