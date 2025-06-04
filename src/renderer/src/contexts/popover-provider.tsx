@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useState } from 'react'
+import { ReactNode, useCallback, useState, useMemo } from 'react'
 import { PopoverContext } from './popover-contexts'
 import { CoreMessage } from 'ai'
 
@@ -15,19 +15,18 @@ export const PopoverProvider = ({ children }: { children: ReactNode }) => {
     setIsPaused(false)
   }, [])
 
-  return (
-    <PopoverContext.Provider
-      value={{
-        setMessages: setMessages,
-        messages: messages,
-        isProcessing: isProcessing,
-        setIsProcessing: setIsProcessing,
-        isPaused: isPaused,
-        pauseAutoProcessing,
-        resumeAutoProcessing
-      }}
-    >
-      {children}
-    </PopoverContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      setMessages,
+      messages,
+      isProcessing,
+      setIsProcessing,
+      isPaused,
+      pauseAutoProcessing,
+      resumeAutoProcessing
+    }),
+    [messages, isProcessing, isPaused, pauseAutoProcessing, resumeAutoProcessing]
   )
+
+  return <PopoverContext.Provider value={contextValue}>{children}</PopoverContext.Provider>
 }
