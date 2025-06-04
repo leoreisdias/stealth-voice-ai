@@ -92,7 +92,6 @@ export class WindowAudioCapture {
 
   private cleanupOldSegments() {
     if (this.audioSegments.length > this.MAX_SEGMENTS) {
-      // Manter apenas os últimos MAX_SEGMENTS
       this.audioSegments = this.audioSegments.slice(-this.MAX_SEGMENTS)
     }
   }
