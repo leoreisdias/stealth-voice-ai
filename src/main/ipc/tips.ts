@@ -18,7 +18,7 @@ const generateTip = async (messages: CoreMessage[]): Promise<CoreMessage[]> => {
     messages: messages
   })
 
-  return result.response.messages
+  return [...messages, ...result.response.messages]
 }
 
 ipcMain.handle('tips:generate', async (_event, prompts: { messages: CoreMessage[] }) => {

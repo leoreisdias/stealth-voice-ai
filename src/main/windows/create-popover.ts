@@ -8,7 +8,14 @@ ipcMain.on('expand', (_) => {
   if (!popoverWindow) return
 
   const [width] = popoverWindow.getSize()
-  popoverWindow.setSize(width, 300)
+  popoverWindow.setSize(width, 340)
+})
+
+ipcMain.on('collapse', (_) => {
+  if (!popoverWindow) return
+
+  const [width] = popoverWindow.getSize()
+  popoverWindow.setSize(width, 100)
 })
 
 export function createPopover(): BrowserWindow {

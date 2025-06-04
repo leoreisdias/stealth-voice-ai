@@ -8,6 +8,7 @@ declare global {
     api: {
       popover: {
         expand: () => void
+        collapse: () => void
       }
       openConfig: () => void
       togglePopover: () => void

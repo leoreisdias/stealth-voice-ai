@@ -6,7 +6,8 @@ import { CoreMessage } from 'ai'
 // Custom APIs for renderer
 const api = {
   popover: {
-    expand: () => electronAPI.ipcRenderer.send('expand')
+    expand: () => electronAPI.ipcRenderer.send('expand'),
+    collapse: () => electronAPI.ipcRenderer.send('collapse')
   },
   openConfig: () => electronAPI.ipcRenderer.send('open-config'),
   togglePopover: () => electronAPI.ipcRenderer.send('toggle-popover'),
